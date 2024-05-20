@@ -6,6 +6,8 @@ void main() {
   final logger = MiraiTraceLogger(
     settings: DefaultSettings(
       type: LogTypeEntity.debug,
+      showLines: false,
+      showHeaders: false
     ),
   );
 
@@ -13,13 +15,13 @@ void main() {
   logger.info('info');
   logger.warning('warning', header: 'test 2');
   logger.error('error');
-  logger.critical('type');
+  logger.critical('Critical');
+  logger.success('type');
   logger.log(
     'log with level info',
     header: 'test 6',
     level: LogTypeEntity.error,
   );
-  logger.log('custom pen log ', header: 'test 7', color: AnsiPen()..xterm(49));
 
   final formatedData = convertStringFormat({
     "id": 1,
@@ -35,10 +37,20 @@ void main() {
     "images": ["...", "...", "..."],
   });
   logger.log(formatedData, level: LogTypeEntity.error);
+
+  try {
+    simulateError();
+  } catch (e, stacktrace) {
+    logger.stackTrx(stacktrace, header: e);
+  }
 }
 
 String convertStringFormat(dynamic object) {
   const encoder = JsonEncoder.withIndent('  ');
   final formatedData = encoder.convert(object);
   return formatedData;
+}
+
+void simulateError() {
+  throw Exception('Simulated exception');
 }

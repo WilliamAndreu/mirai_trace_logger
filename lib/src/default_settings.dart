@@ -1,12 +1,13 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
 
 final _defaultColors = {
-  LogTypeEntity.critical: AnsiPen()..red(),
+  LogTypeEntity.critical: AnsiPen()..xterm(198),
   LogTypeEntity.error: AnsiPen()..red(),
   LogTypeEntity.warning: AnsiPen()..yellow(),
   LogTypeEntity.info: AnsiPen()..blue(),
   LogTypeEntity.debug: AnsiPen()..gray(),
-    LogTypeEntity.success: AnsiPen()..green(),
+  LogTypeEntity.success: AnsiPen()..xterm(49),
+  LogTypeEntity.stacktrace:  AnsiPen()..xterm(214)
 };
 
 class DefaultSettings {
@@ -14,7 +15,7 @@ class DefaultSettings {
       {Map<LogTypeEntity, AnsiPen>? colors,
       this.type = LogTypeEntity.info,
       this.lineSymbol = '─',
-      this.maxLineWidth = 70,
+      this.maxLineWidth = 60,
       this.showLines = true,
        this.showHeaders = true,}) {
     if (colors != null) {
