@@ -6,6 +6,7 @@ final _defaultColors = {
   LogTypeEntity.warning: AnsiPen()..yellow(),
   LogTypeEntity.info: AnsiPen()..blue(),
   LogTypeEntity.debug: AnsiPen()..gray(),
+    LogTypeEntity.success: AnsiPen()..green(),
 };
 
 class DefaultSettings {

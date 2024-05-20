@@ -13,7 +13,7 @@ void main() {
   logger.info('info');
   logger.warning('warning', header: 'test 2');
   logger.error('error');
-  logger.crytech('type');
+  logger.critical('type');
   logger.log(
     'log with level info',
     header: 'test 6',

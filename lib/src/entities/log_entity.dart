@@ -7,17 +7,17 @@ class LogEntity {
     this.header,
     required this.message,
     required this.level,
-    required this.pen,
+    required this.color,
+    this.stack,
   });
 
   final dynamic header;
 
-  /// Log message
   final dynamic message;
 
-  /// Log [LogLevel]
   final LogTypeEntity level;
 
-  /// Pen for colored console message
-  final AnsiPen pen;
+  final AnsiPen color;
+
+  final dynamic stack;
 }

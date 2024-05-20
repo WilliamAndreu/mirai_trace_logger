@@ -22,9 +22,9 @@ class MiraiTraceLogger {
   late final void Function(String message) _output;
   late final LoggerFilter _filter;
 
-  void log(dynamic msg, {dynamic header, LogTypeEntity? level, AnsiPen? color}) {
+  void log(dynamic msg, {dynamic header, LogTypeEntity? level, AnsiPen? color, StackTrace? stack}) {
     final selectedLevel = level ?? LogTypeEntity.debug;
-    final selectedPen =
+    final selectedColor =
         color ?? settings.colors[selectedLevel] ?? (AnsiPen()..gray());
 
     if (_filter.shouldLog(selectedLevel)) {
@@ -33,14 +33,15 @@ class MiraiTraceLogger {
             message: msg,
             header: header,
             level: selectedLevel,
-            pen: selectedPen,),
+            color: selectedColor,
+            stack: stack),
         settings,
       );
       _output(formattedMsg);
     }
   }
 
-  void crytech(dynamic msg, {dynamic header}) =>
+  void critical(dynamic msg, {dynamic header}) =>
       log(msg, header: header, level: LogTypeEntity.critical);
 
   void error(dynamic msg, {dynamic header}) =>
@@ -53,6 +54,12 @@ class MiraiTraceLogger {
 
   void info(dynamic msg, {dynamic header}) =>
       log(msg, header: header, level: LogTypeEntity.info);
+
+ void success(dynamic msg, {dynamic header}) =>
+      log(msg, header: header, level: LogTypeEntity.success);
+
+  void stackTrx(StackTrace stack, {dynamic header}) =>
+      log(stack, header: header);
 
   MiraiTraceLogger copyWith({
     DefaultSettings? settings,

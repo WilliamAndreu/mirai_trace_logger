@@ -11,8 +11,8 @@ class ColorStyleLogger implements StyleSource {
     );
     final msg = details.message?.toString() ?? '';
     var lines = msg.split('\n');
-    lines = lines.map((e) => details.pen.write(e)).toList();
-    lines.add(details.pen.write(underline));
+    lines = lines.map((e) => details.color.write(e)).toList();
+    lines.add(details.color.write(underline));
     final coloredMsg = lines.join('\n');
     return coloredMsg;
   }
