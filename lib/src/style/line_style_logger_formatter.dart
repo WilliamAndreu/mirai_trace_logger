@@ -6,7 +6,6 @@ class LineStyleLogger implements StyleSource {
 
   @override
   String formater(LogEntity details, DefaultSettings settings) {
-  
     final header = _formatHeader(details.header);
     final message = _formatMessage(details.message);
     final isStackTrace = details.level == LogTypeEntity.stacktrace;
@@ -30,30 +29,32 @@ class LineStyleLogger implements StyleSource {
 
   List<String> _buildLines(String header, String message, String stackTrace,
       DefaultSettings settings, bool isStackTrace) {
-    final headerLines = header.split('\n');
+    final headerMessage = header.split('\n');
     final messageLines = message.split('\n').map((line) => '  $line').toList();
     final stackLines = stackTrace.split('\n').map((line) => '  $line').toList();
-    final underline = ConsoleUtil.getline(settings.maxLineWidth,
+    final headerline = ConsoleUtil.getline(settings.maxLineWidth,
+        lineSymbol: settings.lineSymbol);
+    final buttonLine = ConsoleUtil.getBottonLine(settings.maxLineWidth,
         lineSymbol: settings.lineSymbol);
 
     if (settings.showHeaders && header.isNotEmpty && header != null) {
       return settings.showLines
           ? [
-              ...headerLines,
-              underline,
+              ...headerMessage,
+              headerline,
               if (isStackTrace) ...stackLines else ...messageLines,
-              underline
+              buttonLine
             ]
           : [
-              ...headerLines,
+              ...headerMessage,
               if (isStackTrace) ...stackLines else ...messageLines
             ];
     } else {
       return settings.showLines
           ? [
-              underline,
+              headerline,
               if (isStackTrace) ...stackLines else ...messageLines,
-              underline
+              buttonLine
             ]
           : [if (isStackTrace) ...stackLines else ...messageLines];
     }
@@ -90,7 +91,7 @@ class LineStyleLogger implements StyleSource {
   }
 
   String _getFunctionNameFromFrame(String frame) {
-   var currentTrace = frame;
+    var currentTrace = frame;
     var indexOfWhiteSpace = currentTrace.indexOf(' ');
     var subStr = currentTrace.substring(indexOfWhiteSpace);
     var indexOfFunction = subStr.indexOf(RegExp(r'[A-Za-z0-9]'));

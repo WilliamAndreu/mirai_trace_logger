@@ -6,6 +6,14 @@ abstract class ConsoleUtil {
     String lineSymbol = '',
   }) {
     final line = lineSymbol * length;
-    return line;
+    return '┌$line';
+  }
+
+  static String getBottonLine(
+    int length, {
+    String lineSymbol = '',
+  }) {
+    final line = lineSymbol * length;
+    return '└$line';
   }
 }
