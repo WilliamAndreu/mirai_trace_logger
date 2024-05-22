@@ -7,17 +7,19 @@ final _defaultColors = {
   LogTypeEntity.info: AnsiPen()..blue(),
   LogTypeEntity.debug: AnsiPen()..gray(),
   LogTypeEntity.success: AnsiPen()..xterm(49),
-  LogTypeEntity.stacktrace:  AnsiPen()..xterm(214)
+  LogTypeEntity.stacktrace: AnsiPen()..xterm(214)
 };
 
 class DefaultSettings {
-  DefaultSettings(
-      {Map<LogTypeEntity, AnsiPen>? colors,
-      this.type = LogTypeEntity.info,
-      this.lineSymbol = '─',
-      this.maxLineWidth = 60,
-      this.showLines = true,
-       this.showHeaders = true,}) {
+  DefaultSettings({
+    Map<LogTypeEntity, AnsiPen>? colors,
+    this.type = LogTypeEntity.info,
+    this.lineSymbol = '─',
+    this.maxLineWidth = 60,
+    this.showLines = true,
+    this.showHeaders = true,
+    this.forceLogs = false,
+  }) {
     if (colors != null) {
       _defaultColors.addAll(colors);
     }
@@ -27,13 +29,11 @@ class DefaultSettings {
   final Map<LogTypeEntity, AnsiPen> colors = _defaultColors;
 
   final LogTypeEntity type;
-
   final String lineSymbol;
-
   final int maxLineWidth;
-
   final bool showLines;
   final bool showHeaders;
+  final bool forceLogs;
 
   DefaultSettings copyWith({
     Map<LogTypeEntity, AnsiPen>? colors,
@@ -42,6 +42,7 @@ class DefaultSettings {
     int? maxLineWidth,
     bool? showLines,
     bool? showHeaders,
+    bool? forceLogs,
   }) {
     return DefaultSettings(
         colors: colors ?? this.colors,
@@ -49,6 +50,7 @@ class DefaultSettings {
         lineSymbol: lineSymbol ?? this.lineSymbol,
         maxLineWidth: maxLineWidth ?? this.maxLineWidth,
         showLines: showLines ?? this.showLines,
-        showHeaders: showHeaders ?? this.showHeaders);
+        showHeaders: showHeaders ?? this.showHeaders,
+        forceLogs: forceLogs ?? this.forceLogs);
   }
 }

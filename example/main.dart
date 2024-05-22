@@ -4,11 +4,7 @@ import 'package:mirai_trace_logger/mirai_logger.dart';
 
 void main() {
   final logger = MiraiTraceLogger(
-    settings: DefaultSettings(
-      type: LogTypeEntity.debug,
-      showLines: false,
-      showHeaders: false
-    ),
+    settings: DefaultSettings(type: LogTypeEntity.debug),
   );
 
   logger.debug('debug');

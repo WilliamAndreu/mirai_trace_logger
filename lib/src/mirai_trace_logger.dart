@@ -1,5 +1,8 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
-import 'package:mirai_trace_logger/src/utils/mirai_trace_io.dart' as log_output;
+import 'package:mirai_trace_logger/src/utils/mirai_trace_debug_io.dart'
+    as log_output;
+import 'package:mirai_trace_logger/src/utils/mirai_trace_release_io.dart'
+    as log_output_release;
 
 class MiraiTraceLogger {
   MiraiTraceLogger({
@@ -7,10 +10,13 @@ class MiraiTraceLogger {
     this.formatter = const LineStyleLogger(),
     LoggerFilter? filter,
     void Function(String message)? output,
+    void Function(String message)? outputRelease,
   }) {
     this.settings = settings ?? DefaultSettings();
 
     _output = output ?? log_output.outputLog;
+    _outputRelease = outputRelease ?? log_output_release.outputLogRelease;
+
     _filter = filter ?? LogTypeilter(this.settings.type);
     ansiColorDisabled = false;
   }
@@ -20,6 +26,8 @@ class MiraiTraceLogger {
   final LineStyleLogger formatter;
 
   late final void Function(String message) _output;
+
+  late final void Function(String message) _outputRelease;
   late final LoggerFilter _filter;
 
   void log(
@@ -28,12 +36,40 @@ class MiraiTraceLogger {
     LogTypeEntity? level,
     AnsiPen? color,
     StackTrace? stackTrx,
+    bool? forceLogs,
   }) {
     final selectedLevel = level ?? LogTypeEntity.debug;
     final selectedColor =
         color ?? settings.colors[selectedLevel] ?? (AnsiPen()..gray());
 
-    if (_filter.shouldLog(selectedLevel)) {
+    if (_filter.shouldLog(settings.type) && settings.forceLogs == false) {
+      final formattedMsg = formatter.formater(
+        LogEntity(
+          message: msg,
+          header: header,
+          level: selectedLevel,
+          color: selectedColor,
+          stack: stackTrx,
+        ),
+        settings,
+      );
+      _output(formattedMsg);
+    }
+    if (_filter.shouldLog(settings.type) && settings.forceLogs == true) {
+      final formattedMsg = formatter.formater(
+        LogEntity(
+          message: msg,
+          header: header,
+          level: selectedLevel,
+          color: selectedColor,
+          stack: stackTrx,
+        ),
+        settings,
+      );
+      _outputRelease(formattedMsg);
+    }
+
+    if (!_filter.shouldLog(settings.type) && settings.forceLogs == true) {
       final formattedMsg = formatter.formater(
         LogEntity(
             message: msg,
@@ -43,7 +79,7 @@ class MiraiTraceLogger {
             stack: stackTrx),
         settings,
       );
-      _output(formattedMsg);
+      _outputRelease(formattedMsg);
     }
   }
 
@@ -72,12 +108,14 @@ class MiraiTraceLogger {
     LineStyleLogger? formatter,
     LoggerFilter? filter,
     Function(String message)? output,
+    Function(String message)? outputRelease,
   }) {
     return MiraiTraceLogger(
       settings: settings ?? this.settings,
       formatter: formatter ?? this.formatter,
       filter: filter ?? _filter,
       output: output ?? _output,
+      outputRelease: outputRelease ?? _outputRelease,
     );
   }
 }
