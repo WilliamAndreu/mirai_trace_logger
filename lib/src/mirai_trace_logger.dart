@@ -41,45 +41,25 @@ class MiraiTraceLogger {
     final selectedLevel = level ?? LogTypeEntity.debug;
     final selectedColor =
         color ?? settings.colors[selectedLevel] ?? (AnsiPen()..gray());
+    final shouldLog = _filter.shouldLog(settings.type);
+    final forceLogs = settings.forceLogs;
 
-    if (_filter.shouldLog(settings.type) && settings.forceLogs == false) {
-      final formattedMsg = formatter.formater(
-        LogEntity(
-          message: msg,
-          header: header,
-          level: selectedLevel,
-          color: selectedColor,
-          stack: stackTrx,
-        ),
-        settings,
+    if (shouldLog || forceLogs) {
+      final logEntity = LogEntity(
+        message: msg,
+        header: header,
+        level: selectedLevel,
+        color: selectedColor,
+        stack: stackTrx,
       );
-      _output(formattedMsg);
-    }
-    if (_filter.shouldLog(settings.type) && settings.forceLogs == true) {
-      final formattedMsg = formatter.formater(
-        LogEntity(
-          message: msg,
-          header: header,
-          level: selectedLevel,
-          color: selectedColor,
-          stack: stackTrx,
-        ),
-        settings,
-      );
-      _outputRelease(formattedMsg);
-    }
 
-    if (!_filter.shouldLog(settings.type) && settings.forceLogs == true) {
-      final formattedMsg = formatter.formater(
-        LogEntity(
-            message: msg,
-            header: header,
-            level: selectedLevel,
-            color: selectedColor,
-            stack: stackTrx),
-        settings,
-      );
-      _outputRelease(formattedMsg);
+      final formattedMsg = formatter.formater(logEntity, settings);
+
+      if (forceLogs) {
+        _outputRelease(formattedMsg);
+      } else {
+        _output(formattedMsg);
+      }
     }
   }
 
