@@ -9,148 +9,89 @@ class LineStyleLogger implements StyleSource {
   String formater(LogEntity details, DefaultSettings settings) {
     final header = _formatHeader(details.header);
     final message = _formatMessage(details.message);
-    final isStackTrace = details.level == LogTypeEntity.stacktrace;
-    final isHttpResponse = details.level == LogTypeEntity.httpResponse;
-    final isHttpRequest = details.level == LogTypeEntity.httpRequest;
-    final isHttpError = details.level == LogTypeEntity.httpError;
+    final logTypeHandlers = _getLogTypeHandlers(details);
+    final formattedLog = _formatLogLines(
+      header,
+      message.toString(),
+      settings,
+      logTypeHandlers,
+    );
 
-    final stackTrace = isStackTrace && details.stack != null
-        ? _formatStackTrace(details.stack!)
-        : '';
-    final httpError = isHttpError && details.httpError != null
-        ? _formatHttpError(details.httpError!)
-        : '';
-    final httpResponse = isHttpResponse && details.httpResponse != null
-        ? _formatHttpResponse(details.httpResponse!)
-        : '';
-
-    final httpRequest = isHttpRequest && details.httpRequest != null
-        ? _formatHttpRequest(details.httpRequest!)
-        : '';
-
-    final lines = _buildLines(
-        header,
-        message.toString(),
-        stackTrace,
-        settings,
-        isStackTrace,
-        isHttpResponse,
-        isHttpRequest,
-        isHttpError,
-        httpResponse,
-        httpError,
-        httpRequest);
-
-    final coloredLines = lines.map(details.color.write).toList();
-    return coloredLines.join('\n');
+    return _applyColorAndJoin(formattedLog, details.color.write);
   }
 
-  String _formatHeader(header) {
-    return header == null ? '' : '[${header}]';
+  String _formatHeader(String? header) {
+    return header == null ? '' : '[$header]';
   }
 
-  dynamic _formatMessage(message) {
+  dynamic _formatMessage(dynamic message) {
     return message ?? '';
   }
 
-  List<String> _buildLines(
+  Map<String, String> _getLogTypeHandlers(LogEntity details) {
+    return {
+      'stackTrace':
+          details.level == LogTypeEntity.stacktrace && details.stack != null
+              ? _formatStackTrace(details.stack!)
+              : '',
+      'httpError':
+          details.level == LogTypeEntity.httpError && details.httpError != null
+              ? _formatHttpError(details.httpError!)
+              : '',
+      'httpResponse': details.level == LogTypeEntity.httpResponse &&
+              details.httpResponse != null
+          ? _formatHttpResponse(details.httpResponse!)
+          : '',
+      'httpRequest': details.level == LogTypeEntity.httpRequest &&
+              details.httpRequest != null
+          ? _formatHttpRequest(details.httpRequest!)
+          : '',
+    };
+  }
+
+  List<String> _formatLogLines(
     String header,
     String message,
-    String stackTrace,
     DefaultSettings settings,
-    bool isStackTrace,
-    bool isHttpResponse,
-    bool isHttpRequest,
-    bool isHttpError,
-    String httpResponse,
-    String httpError,
-    String httpRequest,
+    Map<String, String> logTypeHandlers,
   ) {
-    final headerMessage = header.split('\n');
-    final messageLines = message.split('\n').map((line) => '  $line').toList();
-    final httpRequestLines =
-        httpRequest.split('\n').map((line) => '  $line').toList();
-    final httpResponseLines =
-        httpResponse.split('\n').map((line) => '  $line').toList();
-    final httpErrorLines =
-        httpError.split('\n').map((line) => '  $line').toList();
+    final messageLines = _indentLines(message.split('\n'));
+    final logLines = _selectLogLines(logTypeHandlers);
 
-    final stackLines = stackTrace.split('\n').map((line) => '  $line').toList();
-    final headerline = ConsoleUtil.getline(settings.maxLineWidth,
+    final headerLine = ConsoleUtil.getline(settings.maxLineWidth,
         lineSymbol: settings.lineSymbol);
-    final buttonLine = ConsoleUtil.getBottonLine(settings.maxLineWidth,
+    final footerLine = ConsoleUtil.getBottonLine(settings.maxLineWidth,
         lineSymbol: settings.lineSymbol);
 
-    if (settings.showHeaders && header.isNotEmpty && header != null) {
-      return settings.showLines
-          ? [
-              ...headerMessage,
-              headerline,
-              if (isStackTrace)
-                ...stackLines
-              else if (isHttpError)
-                ...httpErrorLines
-              else if (isHttpResponse)
-                ...httpResponseLines
-              else if (isHttpRequest)
-                ...httpRequestLines
-              else
-                ...messageLines,
-              buttonLine
-            ]
-          : [
-              ...headerMessage,
-              if (isStackTrace)
-                ...stackLines
-              else if (isHttpError)
-                ...httpErrorLines
-              else if (isHttpResponse)
-                ...httpResponseLines
-              else if (isHttpRequest)
-                ...httpRequestLines
-              else
-                ...messageLines
-            ];
-    } else {
-      return settings.showLines
-          ? [
-              headerline,
-              if (isStackTrace)
-                ...stackLines
-              else if (isHttpError)
-                ...httpErrorLines
-              else if (isHttpResponse)
-                ...httpResponseLines
-              else if (isHttpRequest)
-                ...httpRequestLines
-              else
-                ...messageLines,
-              buttonLine,
-            ]
-          : [
-              if (isStackTrace)
-                ...stackLines
-              else if (isHttpError)
-                ...httpErrorLines
-              else if (isHttpResponse)
-                ...httpResponseLines
-              else if (isHttpRequest)
-                ...httpRequestLines
-              else
-                ...messageLines
-            ];
-    }
+    final formattedLines = [
+      if (settings.showHeaders && header.isNotEmpty) header,
+      if (settings.showLines) headerLine,
+      ...messageLines,
+      ...logLines,
+      if (settings.showLines) footerLine,
+    ];
+
+    return formattedLines.where((line) => line.isNotEmpty).toList();
+  }
+
+  List<String> _selectLogLines(Map<String, String> logTypeHandlers) {
+    return logTypeHandlers.values
+        .expand((log) => _indentLines(log.split('\n')))
+        .toList();
+  }
+
+  List<String> _indentLines(List<String> lines) {
+    return lines.map((line) => line.isNotEmpty ? '  $line' : line).toList();
+  }
+
+  String _applyColorAndJoin(
+      List<String> lines, String Function(String) colorWriter) {
+    return lines.map(colorWriter).join('\n');
   }
 
   String _formatStackTrace(StackTrace stack) {
     final stackEntity = _parseTrace(stack);
-    return [
-      stackEntity.fileName,
-      stackEntity.functionName,
-      stackEntity.callerFunctionName,
-      stackEntity.lineNumber,
-      stackEntity.columnNumber
-    ].join('\n');
+    return [stackEntity.fileName, stackEntity.functionName].join('\n');
   }
 
   String _formatHttpError(MiraiHttpError error) {
@@ -177,31 +118,16 @@ class LineStyleLogger implements StyleSource {
   StacktraceEntity _parseTrace(StackTrace trace) {
     final frames = trace.toString().split('\n');
     final functionName = _getFunctionNameFromFrame(frames[0]);
-    final callerFunctionName = _getFunctionNameFromFrame(frames[1]);
-
+    //final callerFunctionName = _getFunctionNameFromFrame(frames[1]);
     final traceString = frames[0];
     final fileName = _extractFileName(traceString);
-    final lineNumber = _extractLineNumber(traceString);
-    final columnNumber = _extractColumnNumber(traceString);
+    //final lineNumber = _extractLineNumber(traceString);
+    //final columnNumber = _extractColumnNumber(traceString);
 
     return StacktraceEntity(
       fileName: fileName,
       functionName: functionName,
-      callerFunctionName: callerFunctionName,
-      lineNumber: lineNumber,
-      columnNumber: columnNumber,
     );
-  }
-
-  String _getFunctionNameFromFrame(String frame) {
-    var currentTrace = frame;
-    var indexOfWhiteSpace = currentTrace.indexOf(' ');
-    var subStr = currentTrace.substring(indexOfWhiteSpace);
-    var indexOfFunction = subStr.indexOf(RegExp(r'[A-Za-z0-9]'));
-    subStr = subStr.substring(indexOfFunction);
-    indexOfWhiteSpace = subStr.indexOf(' ');
-    subStr = subStr.substring(0, indexOfWhiteSpace);
-    return subStr;
   }
 
   String _extractFileName(String traceString) {
@@ -219,5 +145,16 @@ class LineStyleLogger implements StyleSource {
     final columnNumberPattern = RegExp(r':\d+:(\d+)\)');
     return int.parse(
         columnNumberPattern.firstMatch(traceString)?.group(1) ?? '0');
+  }
+
+  String _getFunctionNameFromFrame(String frame) {
+    var currentTrace = frame;
+    var indexOfWhiteSpace = currentTrace.indexOf(' ');
+    var subStr = currentTrace.substring(indexOfWhiteSpace);
+    var indexOfFunction = subStr.indexOf(RegExp(r'[A-Za-z0-9]'));
+    subStr = subStr.substring(indexOfFunction);
+    indexOfWhiteSpace = subStr.indexOf(' ');
+    subStr = subStr.substring(0, indexOfWhiteSpace);
+    return subStr;
   }
 }

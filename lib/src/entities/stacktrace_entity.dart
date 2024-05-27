@@ -4,13 +4,13 @@ class StacktraceEntity {
   const StacktraceEntity(
       {required this.fileName,
       required this.functionName,
-      required this.callerFunctionName,
-      required this.lineNumber,
-      required this.columnNumber});
+      this.callerFunctionName,
+      this.lineNumber,
+      this.columnNumber});
 
   final String fileName;
   final String functionName;
-  final String callerFunctionName;
-  final int lineNumber;
-  final int columnNumber;
+  final String? callerFunctionName;
+  final int? lineNumber;
+  final int? columnNumber;
 }

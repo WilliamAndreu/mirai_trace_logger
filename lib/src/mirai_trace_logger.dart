@@ -35,7 +35,7 @@ class MiraiTraceLogger {
 
   void log(
     dynamic msg, {
-    dynamic header,
+    String? header,
     LogTypeEntity? level,
     AnsiPen? color,
     StackTrace? stackTrx,
@@ -71,48 +71,48 @@ class MiraiTraceLogger {
     }
   }
 
-  void critical(dynamic msg, {dynamic header}) =>
+  void critical(dynamic msg, {String? header}) =>
       log(msg, header: header, level: LogTypeEntity.critical);
 
-  void error(dynamic msg, {dynamic header}) =>
+  void error(dynamic msg, {String? header}) =>
       log(msg, header: header, level: LogTypeEntity.error);
 
-  void warning(dynamic msg, {dynamic header}) =>
+  void warning(dynamic msg, {String? header}) =>
       log(msg, header: header, level: LogTypeEntity.warning);
 
-  void debug(dynamic msg, {dynamic header}) => log(msg, header: header);
+  void debug(dynamic msg, {String? header}) => log(msg, header: header);
 
-  void info(dynamic msg, {dynamic header}) =>
+  void info(dynamic msg, {String? header}) =>
       log(msg, header: header, level: LogTypeEntity.info);
 
-  void success(dynamic msg, {dynamic header}) => log(
+  void success(dynamic msg, {String? header}) => log(
         msg,
         header: header,
         level: LogTypeEntity.success,
       );
 
-  void stackTrx(StackTrace stack, {dynamic header}) => log(
+  void stackTrx(StackTrace stack, {String? header}) => log(
         "",
         stackTrx: stack,
         header: header,
         level: LogTypeEntity.stacktrace,
       );
 
-  void httpRequest(MiraiHttpRequest request, {dynamic header}) => log(
+  void httpRequest(MiraiHttpRequest request, {String? header}) => log(
         "",
         header: header,
         level: LogTypeEntity.httpRequest,
         httpRequest: request,
       );
 
-  void httpResponse(MiraiHttpResponse response, {dynamic header}) => log(
+  void httpResponse(MiraiHttpResponse response, {String? header}) => log(
         "",
         header: header,
         level: LogTypeEntity.httpResponse,
         httpResponse: response,
       );
 
-  void httpError(MiraiHttpError httpError, {dynamic header}) => log(
+  void httpError(MiraiHttpError httpError, {String? header}) => log(
         "",
         header: header,
         level: LogTypeEntity.httpError,

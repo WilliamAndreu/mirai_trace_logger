@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:math';
 
 import 'package:mirai_trace_logger/mirai_logger.dart';
@@ -6,11 +7,8 @@ import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
 void main() {
   final logger = MiraiTraceLogger(
-    settings: DefaultSettings(
-      type: LogTypeEntity.debug,
-    ),
+    settings: DefaultSettings(type: LogTypeEntity.debug),
   );
-
 
   logger.debug('debug', header: 'test 1');
   logger.info('info');
@@ -52,8 +50,9 @@ void main() {
   try {
     simulateError();
   } catch (e, stacktrace) {
-    logger.stackTrx(stacktrace, header: e);
+    logger.stackTrx(stacktrace, header: e.toString());
   }
+  debugger();
 }
 
 String convertStringFormat(dynamic object) {

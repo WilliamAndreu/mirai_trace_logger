@@ -12,7 +12,7 @@ class LogEntity {
       this.httpResponse,
       this.httpError});
 
-  final dynamic header;
+  final String? header;
 
   final dynamic message;
 
