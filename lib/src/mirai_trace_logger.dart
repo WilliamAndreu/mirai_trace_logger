@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:mirai_trace_logger/mirai_logger.dart';
+import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 import 'package:mirai_trace_logger/src/utils/mirai_trace_debug_io.dart'
     as log_output;
 import 'package:mirai_trace_logger/src/utils/mirai_trace_release_io.dart'
@@ -36,6 +39,9 @@ class MiraiTraceLogger {
     LogTypeEntity? level,
     AnsiPen? color,
     StackTrace? stackTrx,
+    MiraiHttpRequest? httpRequest,
+    MiraiHttpResponse? httpResponse,
+    MiraiHttpError? httpError,
     bool? forceLogs,
   }) {
     final selectedLevel = level ?? LogTypeEntity.debug;
@@ -51,10 +57,12 @@ class MiraiTraceLogger {
         level: selectedLevel,
         color: selectedColor,
         stack: stackTrx,
+        httpError: httpError,
+        httpResponse: httpResponse,
+        httpRequest: httpRequest,
       );
 
       final formattedMsg = formatter.formater(logEntity, settings);
-
       if (forceLogs) {
         _outputRelease(formattedMsg);
       } else {
@@ -77,11 +85,39 @@ class MiraiTraceLogger {
   void info(dynamic msg, {dynamic header}) =>
       log(msg, header: header, level: LogTypeEntity.info);
 
-  void success(dynamic msg, {dynamic header}) =>
-      log(msg, header: header, level: LogTypeEntity.success);
+  void success(dynamic msg, {dynamic header}) => log(
+        msg,
+        header: header,
+        level: LogTypeEntity.success,
+      );
 
-  void stackTrx(StackTrace stack, {dynamic header}) =>
-      log("", stackTrx: stack, header: header, level: LogTypeEntity.stacktrace);
+  void stackTrx(StackTrace stack, {dynamic header}) => log(
+        "",
+        stackTrx: stack,
+        header: header,
+        level: LogTypeEntity.stacktrace,
+      );
+
+  void httpRequest(MiraiHttpRequest request, {dynamic header}) => log(
+        "",
+        header: header,
+        level: LogTypeEntity.httpRequest,
+        httpRequest: request,
+      );
+
+  void httpResponse(MiraiHttpResponse response, {dynamic header}) => log(
+        "",
+        header: header,
+        level: LogTypeEntity.httpResponse,
+        httpResponse: response,
+      );
+
+  void httpError(MiraiHttpError httpError, {dynamic header}) => log(
+        "",
+        header: header,
+        level: LogTypeEntity.httpError,
+        httpError: httpError,
+      );
 
   MiraiTraceLogger copyWith({
     DefaultSettings? settings,
