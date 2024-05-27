@@ -1,15 +1,16 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:mirai_trace_logger/mirai_logger.dart';
+import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
 void main() {
   final logger = MiraiTraceLogger(
     settings: DefaultSettings(
       type: LogTypeEntity.debug,
-      showLines: true,
-      showHeaders: false,
     ),
   );
+
 
   logger.debug('debug', header: 'test 1');
   logger.info('info');
@@ -17,6 +18,16 @@ void main() {
   logger.error('error');
   logger.critical('Critical');
   logger.success('type');
+  logger.httpRequest(const MiraiHttpRequest(
+      path: "/holi",
+      method: "GET",
+      baseUrl: "https://meloinvento/api",
+      data: null,
+      queryParameters: {},
+      headers: {}));
+  logger.httpResponse(const MiraiHttpResponse(
+    statusCode: "500",
+  ));
   logger.log(
     'log with level info',
     header: 'test 6',

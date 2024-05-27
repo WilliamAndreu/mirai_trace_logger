@@ -1,4 +1,5 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
+import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 import 'package:mirai_trace_logger/src/entities/stacktrace_entity.dart';
 
 class LineStyleLogger implements StyleSource {
@@ -9,11 +10,36 @@ class LineStyleLogger implements StyleSource {
     final header = _formatHeader(details.header);
     final message = _formatMessage(details.message);
     final isStackTrace = details.level == LogTypeEntity.stacktrace;
+    final isHttpResponse = details.level == LogTypeEntity.httpResponse;
+    final isHttpRequest = details.level == LogTypeEntity.httpRequest;
+    final isHttpError = details.level == LogTypeEntity.httpError;
+
     final stackTrace = isStackTrace && details.stack != null
-        ? _formatStackTrace(details.stack as StackTrace)
+        ? _formatStackTrace(details.stack!)
         : '';
+    final httpError = isHttpError && details.httpError != null
+        ? _formatHttpError(details.httpError!)
+        : '';
+    final httpResponse = isHttpResponse && details.httpResponse != null
+        ? _formatHttpResponse(details.httpResponse!)
+        : '';
+
+    final httpRequest = isHttpRequest && details.httpRequest != null
+        ? _formatHttpRequest(details.httpRequest!)
+        : '';
+
     final lines = _buildLines(
-        header, message.toString(), stackTrace, settings, isStackTrace);
+        header,
+        message.toString(),
+        stackTrace,
+        settings,
+        isStackTrace,
+        isHttpResponse,
+        isHttpRequest,
+        isHttpError,
+        httpResponse,
+        httpError,
+        httpRequest);
 
     final coloredLines = lines.map(details.color.write).toList();
     return coloredLines.join('\n');
@@ -27,10 +53,28 @@ class LineStyleLogger implements StyleSource {
     return message ?? '';
   }
 
-  List<String> _buildLines(String header, String message, String stackTrace,
-      DefaultSettings settings, bool isStackTrace) {
+  List<String> _buildLines(
+    String header,
+    String message,
+    String stackTrace,
+    DefaultSettings settings,
+    bool isStackTrace,
+    bool isHttpResponse,
+    bool isHttpRequest,
+    bool isHttpError,
+    String httpResponse,
+    String httpError,
+    String httpRequest,
+  ) {
     final headerMessage = header.split('\n');
     final messageLines = message.split('\n').map((line) => '  $line').toList();
+    final httpRequestLines =
+        httpRequest.split('\n').map((line) => '  $line').toList();
+    final httpResponseLines =
+        httpResponse.split('\n').map((line) => '  $line').toList();
+    final httpErrorLines =
+        httpError.split('\n').map((line) => '  $line').toList();
+
     final stackLines = stackTrace.split('\n').map((line) => '  $line').toList();
     final headerline = ConsoleUtil.getline(settings.maxLineWidth,
         lineSymbol: settings.lineSymbol);
@@ -42,21 +86,59 @@ class LineStyleLogger implements StyleSource {
           ? [
               ...headerMessage,
               headerline,
-              if (isStackTrace) ...stackLines else ...messageLines,
+              if (isStackTrace)
+                ...stackLines
+              else if (isHttpError)
+                ...httpErrorLines
+              else if (isHttpResponse)
+                ...httpResponseLines
+              else if (isHttpRequest)
+                ...httpRequestLines
+              else
+                ...messageLines,
               buttonLine
             ]
           : [
               ...headerMessage,
-              if (isStackTrace) ...stackLines else ...messageLines
+              if (isStackTrace)
+                ...stackLines
+              else if (isHttpError)
+                ...httpErrorLines
+              else if (isHttpResponse)
+                ...httpResponseLines
+              else if (isHttpRequest)
+                ...httpRequestLines
+              else
+                ...messageLines
             ];
     } else {
       return settings.showLines
           ? [
               headerline,
-              if (isStackTrace) ...stackLines else ...messageLines,
-              buttonLine
+              if (isStackTrace)
+                ...stackLines
+              else if (isHttpError)
+                ...httpErrorLines
+              else if (isHttpResponse)
+                ...httpResponseLines
+              else if (isHttpRequest)
+                ...httpRequestLines
+              else
+                ...messageLines,
+              buttonLine,
             ]
-          : [if (isStackTrace) ...stackLines else ...messageLines];
+          : [
+              if (isStackTrace)
+                ...stackLines
+              else if (isHttpError)
+                ...httpErrorLines
+              else if (isHttpResponse)
+                ...httpResponseLines
+              else if (isHttpRequest)
+                ...httpRequestLines
+              else
+                ...messageLines
+            ];
     }
   }
 
@@ -69,6 +151,27 @@ class LineStyleLogger implements StyleSource {
       stackEntity.lineNumber,
       stackEntity.columnNumber
     ].join('\n');
+  }
+
+  String _formatHttpError(MiraiHttpError error) {
+    return " => PATH: ${error.path}\n"
+        " => STATUS CODE: ${error.statusCode ?? "null"}";
+  }
+
+  String _formatHttpResponse(MiraiHttpResponse response) {
+    return " => RESPONSE STATUS CODE: ${response.statusCode}\n"
+        " => RESPONSE STATUS MESSAGE: ${response.statusMessage} \n"
+        " => RESPONSE DATA: ${response.data}";
+  }
+
+  String _formatHttpRequest(MiraiHttpRequest request) {
+    return " => BASE URL: ${request.baseUrl}\n"
+        " => PATH: ${request.path}\n"
+        " => DATA: ${request.data}\n"
+        " => QUERY PARAMS: ${request.queryParameters}\n"
+        " => HEADERS: ${request.headers}\n"
+        " => RESPONSE TYPE: ${request.responseType}\n"
+        " => METHOD: ${request.method}";
   }
 
   StacktraceEntity _parseTrace(StackTrace trace) {

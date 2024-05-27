@@ -1,15 +1,16 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
+import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
-/// A class for transporting data
-/// about an log message
 class LogEntity {
-  const LogEntity({
-    this.header,
-    required this.message,
-    required this.level,
-    required this.color,
-    this.stack,
-  });
+  const LogEntity(
+      {this.header,
+      required this.message,
+      required this.level,
+      required this.color,
+      this.stack,
+      this.httpRequest,
+      this.httpResponse,
+      this.httpError});
 
   final dynamic header;
 
@@ -18,6 +19,8 @@ class LogEntity {
   final LogTypeEntity level;
 
   final AnsiPen color;
-
-  final dynamic stack;
+  final StackTrace? stack;
+  final MiraiHttpError? httpError;
+  final MiraiHttpRequest? httpRequest;
+  final MiraiHttpResponse?  httpResponse;
 }

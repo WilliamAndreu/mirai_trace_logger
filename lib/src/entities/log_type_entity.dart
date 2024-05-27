@@ -6,16 +6,21 @@ enum LogTypeEntity {
   debug,
   warning,
   stacktrace,
-  success
+  success,
+  httpResponse,
+  httpRequest,
+  httpError
 }
 
-/// List of levels sorted by priority
 final logLevelPriorityList = [
+  LogTypeEntity.httpResponse,
+  LogTypeEntity.httpRequest,
+  LogTypeEntity.httpError,
   LogTypeEntity.stacktrace,
   LogTypeEntity.success,
   LogTypeEntity.critical,
   LogTypeEntity.error,
   LogTypeEntity.warning,
   LogTypeEntity.info,
-  LogTypeEntity.debug,
+  LogTypeEntity.debug
 ];
