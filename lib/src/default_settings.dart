@@ -7,7 +7,10 @@ final _defaultColors = {
   LogTypeEntity.info: AnsiPen()..blue(),
   LogTypeEntity.debug: AnsiPen()..gray(),
   LogTypeEntity.success: AnsiPen()..xterm(49),
-  LogTypeEntity.stacktrace: AnsiPen()..xterm(214)
+  LogTypeEntity.stacktrace: AnsiPen()..xterm(214),
+  LogTypeEntity.httpRequest: AnsiPen()..xterm(012),
+  LogTypeEntity.httpResponse: AnsiPen()..xterm(49),
+  LogTypeEntity.httpError: AnsiPen()..red()
 };
 
 class DefaultSettings {

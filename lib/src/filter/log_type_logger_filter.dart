@@ -9,6 +9,6 @@ class LogTypeilter implements LoggerFilter {
   bool shouldLog(LogTypeEntity level) {
     final currLogLevelIndex = logLevelPriorityList.indexOf(logLevel);
     final msgLogLevelIndex = logLevelPriorityList.indexOf(level);
-    return currLogLevelIndex >= msgLogLevelIndex;
+    return currLogLevelIndex <= msgLogLevelIndex;
   }
 }

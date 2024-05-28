@@ -7,7 +7,7 @@ import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
 void main() {
   final logger = MiraiTraceLogger(
-    settings: DefaultSettings(type: LogTypeEntity.debug),
+    settings: DefaultSettings(type: LogTypeEntity.httpError),
   );
 
   logger.debug('debug', header: 'test 1');
@@ -26,6 +26,8 @@ void main() {
   logger.httpResponse(const MiraiHttpResponse(
     statusCode: "500",
   ));
+  logger
+      .httpError(const MiraiHttpError(path: 'Test/text/v2', statusCode: '500'));
   logger.log(
     'log with level info',
     header: 'test 6',
@@ -45,7 +47,7 @@ void main() {
     "thumbnail": "...",
     "images": ["...", "...", "..."],
   });
-  logger.log(formatedData, level: LogTypeEntity.error);
+  logger.log(formatedData, level: LogTypeEntity.success);
 
   try {
     simulateError();

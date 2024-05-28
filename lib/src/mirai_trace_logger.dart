@@ -98,23 +98,23 @@ class MiraiTraceLogger {
         level: LogTypeEntity.stacktrace,
       );
 
-  void httpRequest(MiraiHttpRequest request, {String? header}) => log(
+  void httpRequest(MiraiHttpRequest request) => log(
         "",
-        header: header,
+        header: 'Dio Interceptor Request',
         level: LogTypeEntity.httpRequest,
         httpRequest: request,
       );
 
-  void httpResponse(MiraiHttpResponse response, {String? header}) => log(
+  void httpResponse(MiraiHttpResponse response) => log(
         "",
-        header: header,
+        header: 'Dio Interceptor Response',
         level: LogTypeEntity.httpResponse,
         httpResponse: response,
       );
 
-  void httpError(MiraiHttpError httpError, {String? header}) => log(
+  void httpError(MiraiHttpError httpError) => log(
         "",
-        header: header,
+        header: 'Dio Interceptor Error',
         level: LogTypeEntity.httpError,
         httpError: httpError,
       );
