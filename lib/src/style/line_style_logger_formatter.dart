@@ -102,7 +102,8 @@ class LineStyleLogger implements StyleSource {
   String _formatHttpResponse(MiraiHttpResponse response) {
     return " => RESPONSE STATUS CODE: ${response.statusCode}\n"
         " => RESPONSE STATUS MESSAGE: ${response.statusMessage} \n"
-        " => RESPONSE DATA: ${response.data}";
+        " => RESPONSE DATA: ${response.data}\n"
+        " => MS: ${response.ms}";
   }
 
   String _formatHttpRequest(MiraiHttpRequest request) {

@@ -22,11 +22,12 @@ class MiraiHttpRequest {
 
 class MiraiHttpResponse {
   const MiraiHttpResponse(
-      {required this.statusCode, this.statusMessage, this.data});
+      {required this.statusCode, this.statusMessage, this.data, this.ms});
 
   final String statusCode;
   final dynamic statusMessage;
   final dynamic data;
+  final String? ms;
 }
 
 class MiraiHttpError {
