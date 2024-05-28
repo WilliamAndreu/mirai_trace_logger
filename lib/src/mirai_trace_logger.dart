@@ -8,18 +8,13 @@ import 'package:mirai_trace_logger/src/utils/mirai_trace_release_io.dart'
     as log_output_release;
 
 class MiraiTraceLogger {
-  MiraiTraceLogger({
-    DefaultSettings? settings,
-    this.formatter = const LineStyleLogger(),
-    LoggerFilter? filter,
-    void Function(String message)? output,
-    void Function(String message)? outputRelease,
-  }) {
+  MiraiTraceLogger(
+      {DefaultSettings? settings,
+      this.formatter = const LineStyleLogger(),
+      LoggerFilter? filter}) {
     this.settings = settings ?? DefaultSettings();
-
-    _output = output ?? log_output.outputLog;
-    _outputRelease = outputRelease ?? log_output_release.outputLogRelease;
-
+    _output = log_output.outputLog;
+    _outputRelease = log_output_release.outputLogRelease;
     _filter = filter ?? LogTypeilter(this.settings.type);
     ansiColorDisabled = false;
   }
@@ -47,7 +42,7 @@ class MiraiTraceLogger {
     final selectedLevel = level ?? LogTypeEntity.debug;
     final selectedColor =
         color ?? settings.colors[selectedLevel] ?? (AnsiPen()..gray());
-    final shouldLog = _filter.shouldLog(settings.type);
+    final shouldLog = _filter.shouldLog(selectedLevel);
     final forceLogs = settings.forceLogs;
 
     if (shouldLog || forceLogs) {
@@ -127,11 +122,8 @@ class MiraiTraceLogger {
     Function(String message)? outputRelease,
   }) {
     return MiraiTraceLogger(
-      settings: settings ?? this.settings,
-      formatter: formatter ?? this.formatter,
-      filter: filter ?? _filter,
-      output: output ?? _output,
-      outputRelease: outputRelease ?? _outputRelease,
-    );
+        settings: settings ?? this.settings,
+        formatter: formatter ?? this.formatter,
+        filter: filter ?? _filter);
   }
 }

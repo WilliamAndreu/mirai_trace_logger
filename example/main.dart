@@ -5,10 +5,16 @@ import 'dart:math';
 import 'package:mirai_trace_logger/mirai_logger.dart';
 import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
+import 'custom_filter.dart';
+
 void main() {
-  final logger = MiraiTraceLogger(
-    settings: DefaultSettings(type: LogTypeEntity.httpError),
-  );
+  final logger =
+      MiraiTraceLogger(settings: DefaultSettings(type: LogTypeEntity.debug));
+
+// Init Logger with custom filter
+//  final logger = MiraiTraceLogger(
+//      settings: DefaultSettings(),
+//      filter: const LogTypeilterCustom(LogTypeEntity.httpError));
 
   logger.debug('debug', header: 'test 1');
   logger.info('info');
