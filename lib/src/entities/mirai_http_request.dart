@@ -1,4 +1,3 @@
-import 'package:mirai_trace_logger/mirai_logger.dart';
 
 class MiraiHttpRequest {
   const MiraiHttpRequest({
@@ -22,7 +21,7 @@ class MiraiHttpRequest {
 
 class MiraiHttpResponse {
   const MiraiHttpResponse(
-      {required this.statusCode, this.statusMessage, this.data, this.ms});
+      {required this.statusCode, this.statusMessage, this.data, this.ms,});
 
   final String statusCode;
   final dynamic statusMessage;
@@ -32,7 +31,7 @@ class MiraiHttpResponse {
 
 class MiraiHttpError {
   const MiraiHttpError(
-      {required this.path, this.statusMessage, required this.statusCode});
+      {required this.path, this.statusMessage, required this.statusCode,});
 
   final String path;
   final dynamic statusMessage;

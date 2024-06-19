@@ -1,4 +1,3 @@
-import 'package:mirai_trace_logger/mirai_logger.dart';
 
 class StacktraceEntity {
   const StacktraceEntity(
@@ -6,7 +5,7 @@ class StacktraceEntity {
       required this.functionName,
       this.callerFunctionName,
       this.lineNumber,
-      this.columnNumber});
+      this.columnNumber,});
 
   final String fileName;
   final String functionName;

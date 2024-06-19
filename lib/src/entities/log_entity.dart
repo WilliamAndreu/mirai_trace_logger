@@ -1,22 +1,21 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
-import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 
 class LogEntity {
   const LogEntity(
       {this.header,
       required this.message,
-      required this.level,
+      required this.type,
       required this.color,
       this.stack,
       this.httpRequest,
       this.httpResponse,
-      this.httpError});
+      this.httpError,});
 
   final String? header;
 
   final dynamic message;
 
-  final LogTypeEntity level;
+  final LogTypeEntity type;
 
   final AnsiPen color;
   final StackTrace? stack;

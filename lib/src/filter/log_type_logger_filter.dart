@@ -7,8 +7,8 @@ class LogTypeilter implements LoggerFilter {
 
   @override
   bool shouldLog(LogTypeEntity level) {
-    final currLogLevelIndex = logLevelPriorityList.indexOf(logLevel);
-    final msgLogLevelIndex = logLevelPriorityList.indexOf(level);
+    final currLogLevelIndex = logTypePriorityList.indexOf(logLevel);
+    final msgLogLevelIndex = logTypePriorityList.indexOf(level);
     return currLogLevelIndex >= msgLogLevelIndex;
   }
 }

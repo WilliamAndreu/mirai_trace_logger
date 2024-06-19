@@ -12,8 +12,10 @@ void main() {
 
   logger.debug('debug', header: 'test 1');
   logger.info('info');
-  logger.success('type');
   logger.warning('warning', header: 'test 2');
+  logger.error('error');
+  logger.critical('Critical');
+  logger.success('type');
   logger.httpRequest(const MiraiHttpRequest(
       path: "/holi",
       method: "GET",
@@ -25,9 +27,8 @@ void main() {
   logger.httpResponse(const MiraiHttpResponse(
     statusCode: "500",
   ),);
-  logger.error('error');
-  logger.critical('Critical');
-  logger.httpError(const MiraiHttpError(path: 'Test/text/v2', statusCode: '500'));
+  logger
+      .httpError(const MiraiHttpError(path: 'Test/text/v2', statusCode: '500'));
   logger.log(
     'log with level info',
     header: 'test 6',

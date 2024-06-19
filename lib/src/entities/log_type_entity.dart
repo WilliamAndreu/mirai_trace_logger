@@ -12,7 +12,7 @@ enum LogTypeEntity {
   httpError
 }
 
-final logLevelPriorityList = [
+final logTypePriorityList = [
   LogTypeEntity.httpResponse,
   LogTypeEntity.httpRequest,
   LogTypeEntity.httpError,
@@ -22,5 +22,5 @@ final logLevelPriorityList = [
   LogTypeEntity.error,
   LogTypeEntity.warning,
   LogTypeEntity.info,
-  LogTypeEntity.debug
+  LogTypeEntity.debug,
 ];

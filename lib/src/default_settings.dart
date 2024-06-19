@@ -10,11 +10,11 @@ final _defaultColors = {
   LogTypeEntity.stacktrace: AnsiPen()..xterm(214),
   LogTypeEntity.httpRequest: AnsiPen()..xterm(012),
   LogTypeEntity.httpResponse: AnsiPen()..xterm(49),
-  LogTypeEntity.httpError: AnsiPen()..red()
+  LogTypeEntity.httpError: AnsiPen()..red(),
 };
 
-class DefaultSettings {
-  DefaultSettings({
+class MiraiSettings {
+  MiraiSettings({
     Map<LogTypeEntity, AnsiPen>? colors,
     this.type = LogTypeEntity.info,
     this.lineSymbol = '─',
@@ -38,7 +38,7 @@ class DefaultSettings {
   final bool showHeaders;
   final bool forceLogs;
 
-  DefaultSettings copyWith({
+  MiraiSettings copyWith({
     Map<LogTypeEntity, AnsiPen>? colors,
     LogTypeEntity? type,
     String? lineSymbol,
@@ -47,13 +47,13 @@ class DefaultSettings {
     bool? showHeaders,
     bool? forceLogs,
   }) {
-    return DefaultSettings(
+    return MiraiSettings(
         colors: colors ?? this.colors,
         type: type ?? this.type,
         lineSymbol: lineSymbol ?? this.lineSymbol,
         maxLineWidth: maxLineWidth ?? this.maxLineWidth,
         showLines: showLines ?? this.showLines,
         showHeaders: showHeaders ?? this.showHeaders,
-        forceLogs: forceLogs ?? this.forceLogs);
+        forceLogs: forceLogs ?? this.forceLogs,);
   }
 }

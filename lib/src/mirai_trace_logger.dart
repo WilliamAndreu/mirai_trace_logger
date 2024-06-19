@@ -1,7 +1,5 @@
-import 'dart:io';
 
 import 'package:mirai_trace_logger/mirai_logger.dart';
-import 'package:mirai_trace_logger/src/entities/mirai_http_request.dart';
 import 'package:mirai_trace_logger/src/utils/mirai_trace_debug_io.dart'
     as log_output;
 import 'package:mirai_trace_logger/src/utils/mirai_trace_release_io.dart'
@@ -9,17 +7,17 @@ import 'package:mirai_trace_logger/src/utils/mirai_trace_release_io.dart'
 
 class MiraiTraceLogger {
   MiraiTraceLogger(
-      {DefaultSettings? settings,
+      {MiraiSettings? settings,
       this.formatter = const LineStyleLogger(),
-      LoggerFilter? filter}) {
-    this.settings = settings ?? DefaultSettings();
+      LoggerFilter? filter,}) {
+    this.settings = settings ?? MiraiSettings();
     _output = log_output.outputLog;
     _outputRelease = log_output_release.outputLogRelease;
     _filter = filter ?? LogTypeilter(this.settings.type);
     ansiColorDisabled = false;
   }
 
-  late final DefaultSettings settings;
+  late final MiraiSettings settings;
 
   final LineStyleLogger formatter;
 
@@ -39,17 +37,17 @@ class MiraiTraceLogger {
     MiraiHttpError? httpError,
     bool? forceLogs,
   }) {
-    final selectedLevel = level ?? LogTypeEntity.debug;
+    final selectedType = level ?? LogTypeEntity.debug;
     final selectedColor =
-        color ?? settings.colors[selectedLevel] ?? (AnsiPen()..gray());
-    final shouldLog = _filter.shouldLog(selectedLevel);
+        color ?? settings.colors[selectedType] ?? (AnsiPen()..gray());
+    final shouldLog = _filter.shouldLog(selectedType);
     final forceLogs = settings.forceLogs;
 
     if (shouldLog || forceLogs) {
       final logEntity = LogEntity(
         message: msg,
         header: header,
-        level: selectedLevel,
+        type: selectedType,
         color: selectedColor,
         stack: stackTrx,
         httpError: httpError,
@@ -115,7 +113,7 @@ class MiraiTraceLogger {
       );
 
   MiraiTraceLogger copyWith({
-    DefaultSettings? settings,
+    MiraiSettings? settings,
     LineStyleLogger? formatter,
     LoggerFilter? filter,
     Function(String message)? output,
@@ -124,6 +122,6 @@ class MiraiTraceLogger {
     return MiraiTraceLogger(
         settings: settings ?? this.settings,
         formatter: formatter ?? this.formatter,
-        filter: filter ?? _filter);
+        filter: filter ?? _filter,);
   }
 }

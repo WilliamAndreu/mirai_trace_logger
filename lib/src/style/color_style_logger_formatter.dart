@@ -1,19 +1,20 @@
 import 'package:mirai_trace_logger/mirai_logger.dart';
 
+
 class ColorStyleLogger implements StyleSource {
   const ColorStyleLogger();
-
   @override
-  String formater(LogEntity details, DefaultSettings settings) {
+  String formater(LogEntity details, MiraiSettings settings) {
     final underline = ConsoleUtil.getline(
       settings.maxLineWidth,
       lineSymbol: settings.lineSymbol,
     );
-    final msg = details.message?.toString() ?? '';
-    var lines = msg.split('\n');
-    lines = lines.map((e) => details.color.write(e)).toList();
-    lines.add(details.color.write(underline));
-    final coloredMsg = lines.join('\n');
-    return coloredMsg;
+    final message = details.message?.toString() ?? '';
+    final formattedLines = message
+        .split('\n')
+        .map(details.color.write)
+        .toList()
+      ..add(details.color.write(underline));
+    return formattedLines.join('\n');
   }
 }
