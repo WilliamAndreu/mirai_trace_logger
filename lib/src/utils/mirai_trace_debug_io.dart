@@ -1,6 +1,7 @@
-import 'dart:async';
 import 'dart:developer';
 
-Future<void> outputLog(String message) async {
-  log(message);
+void outputLog(String message) {
+  final StringBuffer buffer = StringBuffer();
+  message.split('\n').forEach(buffer.writeln);
+  log(buffer.toString());
 }
